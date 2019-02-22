@@ -1,15 +1,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import {
-  StyleSheet,
-  Platform,
-  Animated,
-  Text,
-  View,
-  Dimensions,
-  StatusBar,
-} from 'react-native';
-
+import { StyleSheet, Platform, Animated, Text, View, Dimensions, StatusBar, TouchableOpacity } from 'react-native';
 const {
   height: SCREEN_HEIGHT,
 } = Dimensions.get('window');
@@ -24,8 +15,8 @@ const DEFAULT_HEADER_MIN_HEIGHT = NAV_BAR_HEIGHT;
 const DEFAULT_EXTRA_SCROLL_HEIGHT = 30;
 const DEFAULT_BACKGROUND_IMAGE_SCALE = 1.5;
 
-const DEFAULT_NAVBAR_COLOR = '#3498db';
-const DEFAULT_BACKGROUND_COLOR = '#303F9F';
+const DEFAULT_NAVBAR_COLOR = 'rgba(0,0,0,0.4)';
+const DEFAULT_BACKGROUND_COLOR = 'rgba(0,0,0,0.4)';
 const DEFAULT_TITLE_COLOR = 'white';
 
 const styles = StyleSheet.create({
@@ -76,9 +67,12 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     fontSize: 16,
   },
+  absolute: {
+    position: "absolute",
+    width: SCREEN_HEIGHT,
+  },
 });
-
-class RNParallax extends Component {
+export class RNParallax extends Component {
   constructor() {
     super();
     this.state = {
@@ -193,25 +187,26 @@ class RNParallax extends Component {
     const imageOpacity = this.getImageOpacity();
     const imageTranslate = this.getImageTranslate();
     const imageScale = this.getImageScale();
-
     return (
-      <Animated.Image
-        style={[
-          styles.backgroundImage,
-          {
-            height: this.getHeaderMaxHeight(),
-            opacity: imageOpacity,
-            transform: [{ translateY: imageTranslate }, { scale: imageScale }],
-          },
-        ]}
-        source={backgroundImage}
-      />
+      <View>
+        <Animated.Image
+          style={[
+            styles.backgroundImage,
+            {
+              height: this.getHeaderMaxHeight(),
+              opacity: imageOpacity,
+              transform: [{ translateY: imageTranslate }, { scale: imageScale }],
+            },
+          ]}
+          source={backgroundImage}
+        />
+        <View style={[styles.absolute, { backgroundColor: 'rgba(0,  0,  0,  0.4)', height: this.getHeaderMaxHeight(), }]}></View>
+      </View>
     );
   }
 
   renderPlainBackground() {
     const { backgroundColor } = this.props;
-
     const imageOpacity = this.getImageOpacity();
     const imageTranslate = this.getImageTranslate();
     const imageScale = this.getImageScale();
@@ -231,7 +226,6 @@ class RNParallax extends Component {
   renderNavbarBackground() {
     const { navbarColor } = this.props;
     const navBarOpacity = this.getNavBarOpacity();
-
     return (
       <Animated.View
         style={[
@@ -249,7 +243,6 @@ class RNParallax extends Component {
   renderHeaderBackground() {
     const { backgroundImage, backgroundColor } = this.props;
     const imageOpacity = this.getImageOpacity();
-
     return (
       <Animated.View
         style={[
@@ -268,10 +261,9 @@ class RNParallax extends Component {
   }
 
   renderHeaderTitle() {
-    const { title, titleStyle } = this.props;
+    const { title, } = this.props;
     const titleTranslateY = this.getTitleTranslateY();
     const titleOpacity = this.getTitleOpacity();
-
     return (
       <Animated.View
         style={[
@@ -285,22 +277,36 @@ class RNParallax extends Component {
           },
         ]}
       >
-        {typeof title === 'string'
-          && (
-            <Text style={[styles.headerText, titleStyle]}>
-              {title}
-            </Text>
-          )
-        }
-        {typeof title !== 'string' && title}
+        {title()}
       </Animated.View>
     );
   }
-
+  renderTitle() {
+    const titleTranslateY = this.getTitleTranslateY();
+    const titleOpacity = this.getTitleOpacity();
+    const { scrollViewProps } = this.props
+    return (
+      <TouchableOpacity activeOpacity={1} onPress={() => scrollViewProps.modalViewShowFun()}
+        style={{ position: 'absolute', top: 0, left: 0, right: 0, }}
+      >
+        <Animated.View
+          style={[
+            {
+              transform: [
+                { translateY: titleTranslateY },
+              ],
+              height: this.getHeaderHeight(),
+              opacity: titleOpacity,
+            },
+          ]}
+        >
+        </Animated.View>
+      </TouchableOpacity>
+    )
+  }
   renderHeaderForeground() {
     const { renderNavBar } = this.props;
     const navBarOpacity = this.getNavBarForegroundOpacity();
-
     return (
       <Animated.View
         style={[
@@ -315,7 +321,9 @@ class RNParallax extends Component {
       </Animated.View>
     );
   }
-
+  onScrollToAnimated() {
+    this.scrollView.getNode().scrollTo({ x: 0, y: 0, animated: true })
+  }
   renderScrollView() {
     const {
       renderContent, scrollEventThrottle, scrollViewStyle, contentContainerStyle, innerContainerStyle, scrollViewProps,
@@ -323,12 +331,16 @@ class RNParallax extends Component {
     const { scrollY } = this.state;
     return (
       <Animated.ScrollView
+        ref={ref => (this.scrollView = ref)}
         style={[styles.scrollView, scrollViewStyle]}
         contentContainerStyle={contentContainerStyle}
         scrollEventThrottle={scrollEventThrottle}
-        onScroll={Animated.event(
-          [{ nativeEvent: { contentOffset: { y: scrollY } } }],
-        )}
+        onScroll={
+          Animated.event(
+            [{ nativeEvent: { contentOffset: { y: scrollY } } }],
+          )
+        }
+        onScrollToAnimated={() => this.onScrollToAnimated()}
         {...scrollViewProps}
       >
         <View style={[{ marginTop: this.getHeaderMaxHeight() }, innerContainerStyle]}>
@@ -339,17 +351,16 @@ class RNParallax extends Component {
   }
 
   render() {
-    const { navbarColor, statusBarColor, containerStyle } = this.props;
+    const { navbarColor, statusBarColor, containerStyle, headerMaxHeight } = this.props;
     return (
-      <View style={[styles.container, containerStyle]}>
-        <StatusBar
-          backgroundColor={statusBarColor || navbarColor}
-        />
-        {this.renderScrollView()}
-        {this.renderNavbarBackground()}
+      <View style={[styles.container]}>
+        <StatusBar backgroundColor={statusBarColor || navbarColor} />
+        {/* {this.renderNavbarBackground()} */}
         {this.renderHeaderBackground()}
         {this.renderHeaderTitle()}
+        {this.renderScrollView()}
         {this.renderHeaderForeground()}
+        {this.renderTitle()}
       </View>
     );
   }
