@@ -1,18 +1,19 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { StyleSheet, Platform, Animated, Text, View, Dimensions, StatusBar, TouchableOpacity } from 'react-native';
+import { screenW, screenH, setSpText, scaleSize, isIphoneX, } from "./ScreenUtil";
 const {
   height: SCREEN_HEIGHT,
 } = Dimensions.get('window');
 
 const IS_IPHONE_X = SCREEN_HEIGHT === 812 || SCREEN_HEIGHT === 896;
-const STATUS_BAR_HEIGHT = Platform.OS === 'ios' ? (IS_IPHONE_X ? 44 : 20) : 0;
-const NAV_BAR_HEIGHT = Platform.OS === 'ios' ? (IS_IPHONE_X ? 88 : 64) : 64;
+const STATUS_BAR_HEIGHT = Platform.OS === 'ios' ? (IS_IPHONE_X ? scaleSize(44) : scaleSize(20)) : scaleSize(0);
+const NAV_BAR_HEIGHT = Platform.OS === 'ios' ? (IS_IPHONE_X ? scaleSize(88) : scaleSize(64)) : scaleSize(64);
 
-const SCROLL_EVENT_THROTTLE = 16;
-const DEFAULT_HEADER_MAX_HEIGHT = 170;
+const SCROLL_EVENT_THROTTLE = scaleSize(16);
+const DEFAULT_HEADER_MAX_HEIGHT = scaleSize(170);
 const DEFAULT_HEADER_MIN_HEIGHT = NAV_BAR_HEIGHT;
-const DEFAULT_EXTRA_SCROLL_HEIGHT = 30;
+const DEFAULT_EXTRA_SCROLL_HEIGHT = scaleSize(30);
 const DEFAULT_BACKGROUND_IMAGE_SCALE = 1.5;
 
 const DEFAULT_NAVBAR_COLOR = 'rgba(0,0,0,0.4)';
@@ -65,7 +66,7 @@ const styles = StyleSheet.create({
   headerText: {
     color: DEFAULT_TITLE_COLOR,
     textAlign: 'center',
-    fontSize: 16,
+    fontSize: setSpText(16),
   },
   absolute: {
     position: "absolute",
