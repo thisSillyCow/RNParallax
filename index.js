@@ -201,7 +201,7 @@ export class RNParallax extends Component {
           ]}
           source={backgroundImage}
         />
-        <View style={[styles.absolute, { backgroundColor: 'rgba(0,  0,  0,  0.4)', height: this.getHeaderMaxHeight(), }]}></View>
+        <View style={[styles.absolute, { backgroundColor: 'rgba(0,  0,  0,  0.4)', height: this.getHeaderMaxHeight() + scaleSize(30), }]}></View>
       </View>
     );
   }
