@@ -59,9 +59,9 @@ const styles = StyleSheet.create({
     top: 0,
     left: 0,
     right: 0,
-    paddingTop: STATUS_BAR_HEIGHT,
-    alignItems: 'center',
-    justifyContent: 'center',
+    // paddingTop: STATUS_BAR_HEIGHT,
+    // alignItems: 'center',
+    // justifyContent: 'center',
   },
   headerText: {
     color: DEFAULT_TITLE_COLOR,
