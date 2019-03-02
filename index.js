@@ -59,9 +59,9 @@ const styles = StyleSheet.create({
     top: 0,
     left: 0,
     right: 0,
-    // paddingTop: STATUS_BAR_HEIGHT,
-    // alignItems: 'center',
-    // justifyContent: 'center',
+    paddingTop: STATUS_BAR_HEIGHT,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   headerText: {
     color: DEFAULT_TITLE_COLOR,
@@ -285,22 +285,17 @@ export class RNParallax extends Component {
   renderTitle() {
     const titleTranslateY = this.getTitleTranslateY();
     const titleOpacity = this.getTitleOpacity();
-    const { scrollViewProps } = this.props
+    const { scrollViewProps, moviePlayStyle, movieInfoStyle, palyIocnViewStyle } = this.props
     return (
-      <TouchableOpacity activeOpacity={1} onPress={() => scrollViewProps.modalViewShowFun()}
-        style={{ position: 'absolute', top: 0, left: 0, right: 0, }}
-      >
-        <Animated.View
-          style={[
-            {
-              transform: [
-                { translateY: titleTranslateY },
-              ],
-              height: this.getHeaderHeight(),
-              opacity: titleOpacity,
-            },
-          ]}
-        >
+      <TouchableOpacity style={{ position: 'absolute', top: 0, left: 0, right: 0, }} activeOpacity={1} onPress={() => scrollViewProps.modalViewShowFun()}>
+        <Animated.View style={[{ transform: [{ translateY: titleTranslateY },], height: this.getHeaderHeight(), opacity: titleOpacity, }]}>
+          <View style={{ flex: 1, paddingTop: scaleSize(70), alignItems: 'center', }}>
+            <TouchableOpacity activeOpacity={1} onPress={() => scrollViewProps.moviePalyFun()} style={[moviePlayStyle,]}></TouchableOpacity>
+            <View style={[movieInfoStyle, { marginTop: scaleSize(105) }]}>
+              <TouchableOpacity activeOpacity={1} onPress={() => scrollViewProps.afterPlayFun()} style={[palyIocnViewStyle, { backgroundColor: 'transparent' }]}></TouchableOpacity>
+              <TouchableOpacity activeOpacity={1} onPress={() => scrollViewProps.movieCacheFun()} style={[palyIocnViewStyle, { backgroundColor: 'transparent' }]}></TouchableOpacity>
+            </View>
+          </View>
         </Animated.View>
       </TouchableOpacity>
     )
@@ -333,7 +328,7 @@ export class RNParallax extends Component {
     return (
       <Animated.ScrollView
         ref={ref => (this.scrollView = ref)}
-        style={[styles.scrollView, scrollViewStyle]}
+        style={[styles.scrollView, scrollViewStyle,]}
         contentContainerStyle={contentContainerStyle}
         scrollEventThrottle={scrollEventThrottle}
         onScroll={
@@ -344,7 +339,7 @@ export class RNParallax extends Component {
         onScrollToAnimated={() => this.onScrollToAnimated()}
         {...scrollViewProps}
       >
-        <View style={[{ marginTop: this.getHeaderMaxHeight() }, innerContainerStyle]}>
+        <View style={[{ marginTop: this.getHeaderMaxHeight(), }, innerContainerStyle]}>
           {renderContent()}
         </View>
       </Animated.ScrollView>
